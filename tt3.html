@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gravador + Transcrição</title>
+</head>
+<body>
+  <h2>🎤 Gravar e Transcrever</h2>
+  <button id="recordBtn">Gravar</button>
+  <button id="stopBtn" disabled>Parar</button>
+  <div id="transcription">Transcrição: ...</div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    const recordBtn = document.getElementById("recordBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const transcription = document.getElementById("transcription");
+
+    recordBtn.onclick = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append("audio", audioBlob, "gravacao.webm");
+
+        transcription.textContent = "Transcrevendo...";
+
+        const response = await fetch("/transcrever", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        transcription.textContent = "Transcrição: " + result.text;
+      };
+
+      mediaRecorder.start();
+      recordBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+      mediaRecorder.stop();
+      recordBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+  </script>
+</body>
+</html>
