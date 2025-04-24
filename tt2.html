@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Transcrição em Tempo Real</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      background: #f4f4f4;
+      color: #333;
+    }
+    .transcricao {
+      font-size: 1.4rem;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      background: white;
+      margin-top: 20px;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎤 Transcrição em tempo real</h1>
+  <button id="startBtn">Começar a ouvir</button>
+  <div class="transcricao" id="output">Aguardando fala...</div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const output = document.getElementById('output');
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'pt-BR'; // Português do Brasil
+    recognition.interimResults = true; // Mostra resultados parciais
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      let textoFinal = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        textoFinal += event.results[i][0].transcript;
+      }
+      output.textContent = textoFinal;
+    };
+
+    recognition.onerror = (e) => {
+      output.textContent = 'Erro ao reconhecer: ' + e.error;
+    };
+
+    startBtn.onclick = () => {
+      recognition.start();
+      output.textContent = "Ouvindo...";
+    };
+  </script>
+
+</body>
+</html>
