@@ -1,7 +1,7 @@
-import math
-raio = float(input("Entre com o valor do raio:"))
-area = 3.14 * raio * raio
-if area<0:
-    print ("Não é possível calcular")
-else:
-    print ("A area da circunferencia é:",area)
+import whisper
+
+modelo = whisper.load_model("base")
+
+resposta = modelo.transcribe("Gravando2.m4a")
+
+print(resposta['text'])
