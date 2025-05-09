@@ -1,9 +1,10 @@
-import SpeechRecognition as sr
+import speech_recognition as sr
+import os
 
 def ouvir_microfone():
     microfone = sr.Recognizer()
 
-    with sr.Microfone() as source:
+    with sr.Microphone() as source:
 
         microfone.adjust_for_ambient_noise(source)
 
@@ -13,7 +14,11 @@ def ouvir_microfone():
 
     try: 
         frase = microfone.recognize_google(audio, language= 'pt-BR')
-        print("Você disse; " + frase)
+        print("Você disse: " + frase)
+        if "navegador" in frase:
+          os.system("start Chrome.exe")
+        if "Github" in frase:
+          os.system("start Github.exe")
 
     except sr.UnkownValueError:
         print ("Não entendi")
