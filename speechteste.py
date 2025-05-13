@@ -20,9 +20,10 @@ def ouvir_microfone():
         if "Github" in frase:
           os.system("start Github.exe")
 
-    except sr.UnkownValueError:
+    except sr.UnknownValueError:
         print ("Não entendi")
 
     return frase
+
 
 ouvir_microfone()
