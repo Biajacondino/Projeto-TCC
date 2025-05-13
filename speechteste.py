@@ -13,7 +13,6 @@ def ouvir_microfone():
         frase = microfone.recognize_google(audio, language='pt-BR')
         print("Você disse: " + frase)
 
-        # Executa programas com base na fala
         if "navegador" in frase.lower():
             os.system("start chrome")
         if "github" in frase.lower():
@@ -22,13 +21,25 @@ def ouvir_microfone():
     except sr.UnknownValueError:
         frase = "Não entendi"
         print(frase)
+    except Exception as e:
+        frase = "Erro ao reconhecer fala"
+        print("Erro inesperado:", e)
 
-    # Escreve a frase (ou "Não entendi") no arquivo .txt
-    with open("meuarquivo.txt", "w", encoding="utf-8") as arquivo:
-        arquivo.write(frase)
+    # Caminho completo para a pasta ProjetoTCC
+    documentos = os.path.join(os.environ['USERPROFILE'], 'Documents')
+    destino = os.path.join(documentos, 'Github', 'Projeto-TCC')
 
-    import os
-    print("Salvando arquivo em:", os.getcwd())
+    # Garante que a pasta existe
+    os.makedirs(destino, exist_ok=True)
+
+    caminho_arquivo = os.path.join(destino, "meuarquivo.txt")
+
+    try:
+        with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
+            arquivo.write(frase)
+        print("Arquivo salvo com sucesso em:", caminho_arquivo)
+    except Exception as e:
+        print("Erro ao salvar o arquivo:", e)
 
     return frase
 
