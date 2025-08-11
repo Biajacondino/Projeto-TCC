@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Fala para Libras</title>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    #texto {
+      width: 80%;
+      padding: 15px;
+      font-size: 20px;
+      margin: 20px auto;
+      border: 2px solid #aaa;
+      border-radius: 10px;
+      background: #f0f0f0;
+      cursor: pointer;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 10px 30px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎙️ Fale e veja em Libras</h1>
+  <button id="microfone">Ativar Microfone</button>
+  <div id="texto" tabindex="0">Clique no botão e fale...</div>
+
+  <!-- VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    const botao = document.getElementById('microfone');
+    const divTexto = document.getElementById('texto');
+
+    function simularCliqueReal(elemento) {
+      const evento = new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      });
+      elemento.dispatchEvent(evento);
+    }
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Seu navegador não suporta reconhecimento de voz. Use o Google Chrome.');
+    } else {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const reconhecedor = new SpeechRecognition();
+      reconhecedor.lang = 'pt-BR';
+
+      botao.addEventListener('click', () => {
+        reconhecedor.start();
+        botao.innerText = '🎤 Ouvindo...';
+      });
+
+      reconhecedor.onresult = (event) => {
+        const texto = event.results[0][0].transcript;
+        divTexto.textContent = texto;
+
+        // Seleciona texto e foca para VLibras reagir
+        const range = document.createRange();
+        range.selectNodeContents(divTexto);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        divTexto.focus();
+
+        // Clique real simulado
+        simularCliqueReal(divTexto);
+
+        botao.innerText = '✅ Fale novamente';
+      };
+
+      reconhecedor.onerror = (e) => {
+        alert('Erro ao reconhecer a fala: ' + e.error);
+        botao.innerText = 'Tente novamente';
+      };
+    }
+  </script>
+</body>
+</html>
