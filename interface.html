@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>VLibras com Tradução Automática</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #mensagem-visual {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Digite abaixo</h1>
+  <textarea id="entrada" rows="4" cols="50" placeholder="Digite aqui..."></textarea>
+
+  <h2>Texto sendo traduzido para Libras:</h2>
+  <div id="mensagem-visual" aria-live="polite"></div>
+
+  <!-- VLibras Plugin -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    // Atualiza o conteúdo em tempo real
+    document.getElementById('entrada').addEventListener('input', function () {
+      document.getElementById('mensagem-visual').innerText = this.value;
+    });
+  </script>
+
+</body>
+</html>
